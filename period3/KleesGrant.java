@@ -17,7 +17,7 @@ public class KleesGrant extends Robot
 	public void run() {
 		// Initialization of the robot should be put here
 		//setAdjustGunForRobotTurn(true);
-		//setAdjustRadarForGunTurn(true);
+		setAdjustRadarForGunTurn(true);
 		// After trying out your robot, try uncommenting the import at the top,
 		// and the next line:
 
@@ -46,11 +46,18 @@ public class KleesGrant extends Robot
 		double absBearing = Math.toRadians(enemyHeading) + Math.toRadians(myHeading);
 		double enemyX = myX + e.getDistance() * Math.sin(absBearing);
 		double enemyY = myY + e.getDistance() * Math.cos(absBearing);
-		double newEnemyX = enemyX + e.getVelocity() * Math.sin(Math.toRadians(enemyHeading));
-		double newEnemyY = enemyY + e.getVelocity() * Math.cos(Math.toRadians(enemyHeading));
+		double newEnemyX = enemyX + e.getVelocity() * Math.sin(enemyHeading);
+		double newEnemyY = enemyY + e.getVelocity() * Math.cos(enemyHeading);
 		tOldHeading = enemyHeading;
-		double theta = Utils.normalAbsoluteAngleDegrees(Math.atan2(newEnemyX - myX, newEnemyY - myY));
-		turnGunRight(Utils.normalRelativeAngleDegrees(getGunHeading() - theta));
+		System.out.println("enemyY: " + enemyY + "\nenemyX: " + enemyX);
+		System.out.println("newEnemyY: " + newEnemyY + "\nnewEnemyX: " + newEnemyX + "\nmyY: " + myY + "\nmyX: " + myX);
+		System.out.println("Enemy Relative Y Position: " + (newEnemyY - myY) + "Enemy Relative X Position: " + (newEnemyX - myX)); 
+		double theta = Utils.normalAbsoluteAngleDegrees(Math.toDegrees((Math.atan2(newEnemyX - myX, newEnemyY - myY))));
+		System.out.println("atan2: " + (Math.atan2(newEnemyX - myX, newEnemyY - myY)));
+		System.out.println("Theta: " + theta);
+		System.out.println("Gun heading: " + getGunHeading());
+		System.out.println("Amount to turn: " + (theta - getGunHeading()));
+		turnGunRight(Utils.normalRelativeAngleDegrees(theta - getGunHeading()));
 		fire(3);
 	}
 
