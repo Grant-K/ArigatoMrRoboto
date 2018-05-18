@@ -17,7 +17,8 @@ public class KleesGrant extends Robot
 	public void run() {
 		// Initialization of the robot should be put here
 		//setAdjustGunForRobotTurn(true);
-		setAdjustRadarForGunTurn(true);
+		//setAdjustRadarForGunTurn(true);
+		//setAdjustGunForRobotTurn(true);
 		// After trying out your robot, try uncommenting the import at the top,
 		// and the next line:
 
@@ -25,7 +26,7 @@ public class KleesGrant extends Robot
 
 		// Robot main loop
 		while(true) {
-			turnRadarRight(40);
+			turnRadarRight(10);
 			// Replace the next 4 lines with any behavior you would like
 			//ahead(100);
 			//turnGunRight(360);
@@ -43,21 +44,14 @@ public class KleesGrant extends Robot
 		double myY = getY();
 		double myHeading = getHeading();
 		double enemyHeading = getHeading();
-		double absBearing = Math.toRadians(enemyHeading) + Math.toRadians(myHeading);
+		double absBearing = Math.toDegrees(enemyHeading) + Math.toDegrees(myHeading);
 		double enemyX = myX + e.getDistance() * Math.sin(absBearing);
 		double enemyY = myY + e.getDistance() * Math.cos(absBearing);
 		double newEnemyX = enemyX + e.getVelocity() * Math.sin(enemyHeading);
 		double newEnemyY = enemyY + e.getVelocity() * Math.cos(enemyHeading);
 		tOldHeading = enemyHeading;
-		System.out.println("enemyY: " + enemyY + "\nenemyX: " + enemyX);
-		System.out.println("newEnemyY: " + newEnemyY + "\nnewEnemyX: " + newEnemyX + "\nmyY: " + myY + "\nmyX: " + myX);
-		System.out.println("Enemy Relative Y Position: " + (newEnemyY - myY) + "Enemy Relative X Position: " + (newEnemyX - myX)); 
-		double theta = Utils.normalAbsoluteAngleDegrees(Math.toDegrees((Math.atan2(newEnemyX - myX, newEnemyY - myY))));
-		System.out.println("atan2: " + (Math.atan2(newEnemyX - myX, newEnemyY - myY)));
-		System.out.println("Theta: " + theta);
-		System.out.println("Gun heading: " + getGunHeading());
-		System.out.println("Amount to turn: " + (theta - getGunHeading()));
-		turnGunRight(Utils.normalRelativeAngleDegrees(theta - getGunHeading()));
+		System.out.println("Amount to turn: " + e.getBearing());
+		turnGunRight(Utils.normalRelativeAngleDegrees(e.getBearing()));
 		fire(3);
 	}
 
