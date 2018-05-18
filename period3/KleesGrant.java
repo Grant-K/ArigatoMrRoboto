@@ -1,6 +1,7 @@
 package period3;
 import robocode.*;
 import robocode.util.*;
+//import Point2D.*;
 //import java.awt.Color;
 
 // API help : http://robocode.sourceforge.net/docs/robocode/robocode/Robot.html
@@ -10,7 +11,9 @@ import robocode.util.*;
  */
 public class KleesGrant extends Robot
 {
-	double tOldHeading;
+	double enemyOldHeading = 0;
+	double bulletVelocity = 11;
+	Bullet bullet;
 	/**
 	 * run: KleesGrant's default behavior
 	 */
@@ -26,7 +29,7 @@ public class KleesGrant extends Robot
 
 		// Robot main loop
 		while(true) {
-			turnRadarRight(10);
+			turnRadarRight(40);
 			// Replace the next 4 lines with any behavior you would like
 			//ahead(100);
 			//turnGunRight(360);
@@ -40,19 +43,32 @@ public class KleesGrant extends Robot
 	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
 		// Replace the next line with any behavior you would like
-		double myX = getX();
-		double myY = getY();
-		double myHeading = getHeading();
-		double enemyHeading = getHeading();
-		double absBearing = Math.toDegrees(enemyHeading) + Math.toDegrees(myHeading);
-		double enemyX = myX + e.getDistance() * Math.sin(absBearing);
-		double enemyY = myY + e.getDistance() * Math.cos(absBearing);
-		double newEnemyX = enemyX + e.getVelocity() * Math.sin(enemyHeading);
-		double newEnemyY = enemyY + e.getVelocity() * Math.cos(enemyHeading);
-		tOldHeading = enemyHeading;
+		double enemyDist = e.getDistance();
+		double enemyVel = e.getVelocity();
+		double enemyHeading = e.getHeadingRadians();
+		double enemyHeadingChange = enemyHeading - enemyOldHeading;
+		enemyOldHeading = enemyHeading;
+		double absoluteBearing = e.getBearingRadians() + Math.toRadians(getHeading());
+		double enemyX = getX() + enemyDist * Math.sin(absoluteBearing);
+		double enemyY = getY() + enemyDist * Math.cos(absoluteBearing);
+		double estBulletTravelTime = enemyDist/bulletVelocity;
+		
+		double deltaTime=0;
+		double predictedX = enemyX;
+		double predictedY = enemyY;
+		while (((++deltaTime)*(20-3.0*3)) < Point2D.Double.distance(getX(),getY(),predictedX,predictedY))
+		{
+			predictedX += Math.sin(enemyHeading) * enemyVel;
+			predictedY += Math.cos(enemyHeading) * enemyVel;
+		}
+		double theta = Utils.normalAbsoluteAngle(Math.atan2(predictedX-getX(), predictedY-getY()));
+		double turnInRadians = Utils.normalRelativeAngle(theta-Math.toRadians(getGunHeading()));
+		System.out.println("Gun Bearing Calc: " + (e.getBearing() + (getHeading() - getGunHeading())));
 		System.out.println("Amount to turn: " + e.getBearing());
-		turnGunRight(Utils.normalRelativeAngleDegrees(e.getBearing()));
-		fire(3);
+		turnGunRight(Utils.normalRelativeAngleDegrees(e.getBearing() + (getHeading() - getGunHeading())));
+		bullet = fireBullet(3);
+		bulletVelocity = bullet.getVelocity();
+		
 	}
 
 	/**
