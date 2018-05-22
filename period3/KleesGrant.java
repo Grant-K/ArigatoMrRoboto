@@ -1,6 +1,7 @@
 package period3;
 import robocode.*;
 import robocode.util.*;
+import java.awt.geom.Point2D;
 //import Point2D.*;
 //import java.awt.Color;
 
@@ -11,9 +12,8 @@ import robocode.util.*;
  */
 public class KleesGrant extends Robot
 {
+	double bulletVelocity = 3;
 	double enemyOldHeading = 0;
-	double bulletVelocity = 11;
-	Bullet bullet;
 	/**
 	 * run: KleesGrant's default behavior
 	 */
@@ -52,7 +52,6 @@ public class KleesGrant extends Robot
 		double enemyX = getX() + enemyDist * Math.sin(absoluteBearing);
 		double enemyY = getY() + enemyDist * Math.cos(absoluteBearing);
 		double estBulletTravelTime = enemyDist/bulletVelocity;
-		
 		double deltaTime=0;
 		double predictedX = enemyX;
 		double predictedY = enemyY;
@@ -63,11 +62,14 @@ public class KleesGrant extends Robot
 		}
 		double theta = Utils.normalAbsoluteAngle(Math.atan2(predictedX-getX(), predictedY-getY()));
 		double turnInRadians = Utils.normalRelativeAngle(theta-Math.toRadians(getGunHeading()));
+		double turnInDegrees = Math.toDegrees(turnInRadians);
+		System.out.println("theta: " + theta + "\nturnInRadians: " + turnInRadians + "\nturnInDegrees: " + Math.toDegrees(turnInRadians));
 		System.out.println("Gun Bearing Calc: " + (e.getBearing() + (getHeading() - getGunHeading())));
 		System.out.println("Amount to turn: " + e.getBearing());
-		turnGunRight(Utils.normalRelativeAngleDegrees(e.getBearing() + (getHeading() - getGunHeading())));
-		bullet = fireBullet(3);
-		bulletVelocity = bullet.getVelocity();
+		turnGunRight(Utils.normalRelativeAngleDegrees(turnInDegrees));
+		fire(3);
+		turnRight(e.getBearing() + 90);
+		ahead(200 * Math.sin(getTime() / 20) * Math.cos(getTime() / 20));
 		
 	}
 
@@ -76,7 +78,7 @@ public class KleesGrant extends Robot
 	 */
 	public void onHitByBullet(HitByBulletEvent e) {
 		// Replace the next line with any behavior you would like
-		back(10);
+		//back(10);
 	}
 	
 	/**
@@ -84,6 +86,6 @@ public class KleesGrant extends Robot
 	 */
 	public void onHitWall(HitWallEvent e) {
 		// Replace the next line with any behavior you would like
-		back(20);
+		//back(20);
 	}	
 }
