@@ -14,6 +14,9 @@ public class KleesGrant extends Robot
 {
 	double bulletVelocity = 3;
 	double enemyOldHeading = 0;
+	double battleFieldWidth;
+	double battleFieldHeight;
+	double averageBoardSize;
 	/**
 	 * run: KleesGrant's default behavior
 	 */
@@ -24,6 +27,10 @@ public class KleesGrant extends Robot
 		//setAdjustGunForRobotTurn(true);
 		// After trying out your robot, try uncommenting the import at the top,
 		// and the next line:
+		battleFieldWidth = getBattleFieldWidth();
+		battleFieldHeight = getBattleFieldHeight();
+		averageBoardSize = (battleFieldWidth + battleFieldHeight)/2;
+		System.out.println(averageBoardSize);
 
 		// setColors(Color.red,Color.blue,Color.green); // body,gun,radar
 
@@ -67,18 +74,35 @@ public class KleesGrant extends Robot
 		System.out.println("Gun Bearing Calc: " + (e.getBearing() + (getHeading() - getGunHeading())));
 		System.out.println("Amount to turn: " + e.getBearing());
 		turnGunRight(Utils.normalRelativeAngleDegrees(turnInDegrees));
-		fire(3);
+		fire(bulletVelocity);
 		turnRight(e.getBearing() + 90);
 		ahead(200 * Math.sin(getTime() / 20) * Math.cos(getTime() / 20));
 		
 	}
+	public void onBulletHit(BulletHitEvent e)
+	{/*
+		if(bulletVelocity < 3)
+		{
+			bulletVelocity += 0.5;
+			System.out.println("BulletVelocity: " + bulletVelocity);
+		}
+	*/}
 
+	public void onBulletMissed(BulletMissedEvent e)
+	{/*
+		if(bulletVelocity > 2)
+		{
+			bulletVelocity -= 0.5;
+			System.out.println("BulletVelocity: " + bulletVelocity);
+		}
+	*/}
 	/**
 	 * onHitByBullet: What to do when you're hit by a bullet
 	 */
 	public void onHitByBullet(HitByBulletEvent e) {
 		// Replace the next line with any behavior you would like
 		//back(10);
+		ahead(averageBoardSize/4);
 	}
 	
 	/**
@@ -87,5 +111,7 @@ public class KleesGrant extends Robot
 	public void onHitWall(HitWallEvent e) {
 		// Replace the next line with any behavior you would like
 		//back(20);
+		turnRight(100);
+		ahead(100);
 	}	
 }
